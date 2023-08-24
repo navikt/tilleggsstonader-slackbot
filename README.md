@@ -1,2 +1,2 @@
-# tilleggstonader-slackbot
+# tilleggsstonader-slackbot
 Slackbot for Team tilleggsstønader
