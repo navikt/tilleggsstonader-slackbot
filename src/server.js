@@ -2,7 +2,6 @@ const {WebClient} = require('@slack/web-api');
 const dotenv = require('dotenv');
 const cron = require('node-cron');
 const express = require('express');
-const axios = require('axios');
 const bodyParser = require('body-parser');
 
 const {params} = require('./constants');
@@ -14,11 +13,6 @@ const token = process.env.BOT_TOKEN;
 // Initialize
 const web = new WebClient(token);
 
-cron.schedule('0 7 * * MON', () => {
-    console.log('sender spørsmål om folk har planlagt fravær');
-
-    sendSpørsmålOmUkentligFravær();
-});
 const sendSpørsmålOmKontordag = (kanal, kanalId) => {
     web.chat
         .postMessage({
@@ -50,7 +44,7 @@ const sendSpørsmålOmKontordag = (kanal, kanalId) => {
 
 cron.schedule('0 12 * * 0-4', () => {
     console.log('Sender spørsmål om kontordag');
-    sendSpørsmålOmKontordag('tilleggsstønader-slackbot', 'C05PAMRAG7L');
+    sendSpørsmålOmKontordag('team_tilleggsstønader', 'C049HPU424F');
 });
 
 
@@ -65,7 +59,7 @@ app.use(bodyParser.json({limit: '20mb'}));
 
 
 app.get('/kontordag', (req, res) => {
-    sendSpørsmålOmKontordag('tilleggsstønader-slackbot', 'C05PAMRAG7L')
+    sendSpørsmålOmKontordag('team_tilleggsstønader', 'C049HPU424F')
     res.status(200).send();
 });
 
