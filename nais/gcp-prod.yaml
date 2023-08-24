@@ -1,0 +1,38 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: tilleggsstonader-slackbot
+  namespace: tilleggsstonader
+  labels:
+    team: tilleggsstonader
+spec:
+  image: {{ image }}
+  team: tilleggsstonader
+  port: 3000
+  liveness:
+    path: /isAlive
+  readiness:
+    path: /isAlive
+  prometheus:
+    enabled: false
+  ingresses:
+    - https://tilleggsstonader-slackbot.intern.nav.no
+  replicas:
+    min: 1
+    max: 1
+    cpuThresholdPercentage: 50
+  accessPolicy:
+    outbound:
+      external:
+        - host: slack.com
+        - host: api.slack.com
+        - host: api.quotable.io
+        - host: api.github.com
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 512Mi
+    requests:
+      memory: 256Mi
+  envFrom:
+    - secret: tilleggsstonader-slackbot # Setter env-variablen BOT_TOKEN
