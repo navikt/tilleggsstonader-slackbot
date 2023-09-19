@@ -15,6 +15,7 @@ jobs:
     name: Build and push Docker container
     runs-on: ubuntu-latest
     permissions:
+      content: read
       packages: write
     steps:
       - uses: actions/checkout@v4
