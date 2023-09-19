@@ -3,7 +3,7 @@ name: Build, push, and deploy app
 on:
   workflow_dispatch:
   push:
-    branch:
+    branches:
       - 'main'
 
 env:
@@ -15,7 +15,7 @@ jobs:
     name: Build and push Docker container
     runs-on: ubuntu-latest
     permissions:
-      content: read
+      contents: read
       packages: write
     steps:
       - uses: actions/checkout@v4
