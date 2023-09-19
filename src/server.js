@@ -34,6 +34,11 @@ const sendSpørsmålOmKontordag = (kanal, kanalId) => {
                 });
                 web.reactions.add({
                     channel: kanalId,
+                    name: 'fya1',
+                    timestamp: response.ts,
+                });
+                web.reactions.add({
+                    channel: kanalId,
                     name: 'away',
                     timestamp: response.ts,
                 });
