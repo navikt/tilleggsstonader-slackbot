@@ -47,7 +47,7 @@ const sendSpørsmålOmKontordag = (kanal, kanalId) => {
         })
 };
 
-cron.schedule('0 12 * * 0-4', () => {
+cron.schedule('0 13 * * 0-4', () => {
     console.log('Sender spørsmål om kontordag');
     sendSpørsmålOmKontordag('team_tilleggsstønader', 'C049HPU424F');
 });
