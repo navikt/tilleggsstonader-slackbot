@@ -18,10 +18,11 @@ const headers = {
     'X-GitHub-Api-Version': '2022-11-28',
 };
 
+// Finner repos som er tagget med tilleggsstonader
 const hentRepos = () =>
     octokit
         .request('GET /search/repositories', {
-            q: 'topic:tilleggsstonader',
+            q: 'owner:navikt+topic:tilleggsstonader',
             headers: headers,
         })
         .then((res) => res.data.items as Repo[]);

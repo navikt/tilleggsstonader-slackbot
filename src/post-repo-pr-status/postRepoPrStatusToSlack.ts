@@ -24,7 +24,7 @@ const statusTilTekst = (status: Status) =>
 
 const okEmoji = ':white_check_mark:';
 
-// Sorterer repos etter
+// Prøver å sortere repos, med dependabot nederst
 const mapStatusSortValue = (status: Status) => {
     if (status.antallGodkjente) {
         return 3;
