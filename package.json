@@ -4,17 +4,25 @@
   "description": "Slackbot for Team tilleggsstønader",
   "main": "./src/server.js",
   "scripts": {
-    "start": "node ./src/server.js"
+    "start": "node ./src/server.js",
+    "list-prs": "ncc run src/post-repo-pr-status/repoStatus.ts",
+    "repo-prs-status": "ncc run src/post-repo-pr-status/postRepoPrStatusToSlack.ts"
   },
   "author": "NAV",
   "license": "ISC",
   "dependencies": {
-    "@slack/web-api": "^5.14.0",
     "axios": "^1.4.0",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "node-cron": "^2.0.3",
-    "prettier": "^2.0.5"
+    "octokit": "^3.1.2"
+  },
+  "devDependencies": {
+    "@octokit/types": "^12.4.0",
+    "@slack/web-api": "^6.10.0",
+    "@vercel/ncc": "^0.38.1",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3"
   }
 }
