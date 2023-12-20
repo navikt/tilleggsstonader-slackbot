@@ -5,7 +5,6 @@
   "main": "./src/server.js",
   "scripts": {
     "start": "node ./src/server.js",
-    "list-prs": "ncc run src/post-repo-pr-status/repoStatus.ts",
     "repo-prs-status": "ncc run src/post-repo-pr-status/postRepoPrStatusToSlack.ts"
   },
   "author": "NAV",
