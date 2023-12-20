@@ -5,9 +5,22 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+      day: "sunday"
+      time: "04:00"
     open-pull-requests-limit: 10
+    registries: "*"
+    versioning-strategy: increase
+    groups:
+      frontend:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types: [ "version-update:semver-patch" ]
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
+      day: "sunday"
+      time: "04:00"
     open-pull-requests-limit: 10
