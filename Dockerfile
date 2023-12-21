@@ -1,6 +1,8 @@
-FROM navikt/node-express:16
+FROM gcr.io/distroless/nodejs:18
 
-ADD ./build /var/server/
+ADD ./build /app
+
+WORKDIR /app
 
 EXPOSE 3000
-CMD ["node", "index.js"]
+CMD ["--experimental-modules", "--es-module-specifier-resolution=node", "index.js"]
