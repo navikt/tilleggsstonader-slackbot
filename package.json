@@ -2,19 +2,27 @@
   "name": "tilleggsstonader-slackbot",
   "version": "1.0.0",
   "description": "Slackbot for Team tilleggsstønader",
-  "main": "./src/server.js",
+  "main": "./src/server.ts",
+  "type": "module",
   "scripts": {
-    "start": "node ./src/server.js"
+    "build": "ncc build src/server.ts -o build",
+    "start:dev": "ncc run src/server.ts"
   },
   "author": "NAV",
   "license": "ISC",
   "dependencies": {
-    "@slack/web-api": "^5.14.0",
+    "@slack/web-api": "^6.10.0",
     "axios": "^1.4.0",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "node-cron": "^2.0.3",
-    "prettier": "^2.0.5"
+    "node-cron": "^2.0.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node-cron": "^3.0.11",
+    "@vercel/ncc": "^0.38.1",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3"
   }
 }

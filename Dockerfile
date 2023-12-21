@@ -1,8 +1,8 @@
 FROM navikt/node-express:16
 
-ADD ./ /var/server/
+ADD ./build /var/server/
 
 RUN yarn
 
 EXPOSE 3000
-CMD ["yarn", "start"] 
+CMD ["node", "index.js"]
