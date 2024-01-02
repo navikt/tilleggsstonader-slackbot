@@ -25,7 +25,7 @@ const tilRepoMedStatus = (repoMedPrs: RepoMedPrReviews): RepoStatus => {
     const ikkeDependabotPrs = prs.filter((p) => !erDependabot(p.pr));
     return {
         navn: repo.name,
-        pullsUrl: repo.pulls_url,
+        pullsUrl: repo.pulls_url.replace('{/number}', ''),
         prs: ikkeDependabotPrs.map((pr) => ({
             tittel: pr.pr.title,
             url: pr.pr.url,
