@@ -97,6 +97,8 @@ const hovedpost = (await slackClient.chat.postMessage({
     text: statusTilTekst(total),
 })) as WebAPICallResultMedTs;
 
+console.log(`Laget tråd ${hovedpost.ts}`);
+
 for (const repo of repos.sort(sortByStatus)) {
     const statusEmoji = mapRepoStatus(repo);
 
