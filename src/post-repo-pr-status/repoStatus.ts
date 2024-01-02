@@ -25,10 +25,10 @@ const tilRepoMedStatus = (repoMedPrs: RepoMedPrReviews): RepoStatus => {
     const ikkeDependabotPrs = prs.filter((p) => !erDependabot(p.pr));
     return {
         navn: repo.name,
-        pullsUrl: repo.pulls_url.replace('{/number}', ''),
+        pullsUrl: repo.html_url + '/pulls',
         prs: ikkeDependabotPrs.map((pr) => ({
             tittel: pr.pr.title,
-            url: pr.pr.url,
+            url: pr.pr.html_url,
             erGodkjent: erGodkjent(pr),
         })),
         antallGodkjente: ikkeDependabotPrs.filter(erGodkjent).length,
@@ -59,7 +59,7 @@ const hentPrsMedReviews = async (repo: Repo): Promise<PrMedReviews[]> => {
     );
 };
 
-const hentPrsTilRepos = (repos: Repo[]): Promise<RepoMedPrReviews[]> =>
+export const hentPrsTilRepos = (repos: Repo[]): Promise<RepoMedPrReviews[]> =>
     Promise.all(
         repos.map(async (repo) => {
             const prs = await hentPrsMedReviews(repo);
