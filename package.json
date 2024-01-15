@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "build": "ncc build src/server.ts -o build",
-    "start:dev": "ncc run src/server.ts"
+    "start:dev": "ncc run src/server.ts",
+    "repo-prs-status": "ncc run src/post-repo-pr-status/postRepoPrStatusToSlack.ts"
   },
   "author": "NAV",
   "license": "ISC",
@@ -16,11 +17,13 @@
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "node-cron": "^2.0.3"
+    "node-cron": "^2.0.3",
+    "octokit": "^3.1.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node-cron": "^3.0.11",
+    "@octokit/types": "^12.4.0",
     "@vercel/ncc": "^0.38.1",
     "prettier": "^3.1.1",
     "typescript": "^5.3.3"
