@@ -1,15 +1,13 @@
-import { Block, KnownBlock, WebAPICallResult } from '@slack/web-api';
-import { hentRepoStatus } from './repoStatus';
-import { PrStatus, RepoStatus, Status } from './typer';
-import { slackClient } from '../common/slack';
+import {Block, KnownBlock, WebAPICallResult} from '@slack/web-api';
+import {hentRepoStatus} from './repoStatus';
+import {PrStatus, RepoStatus, Status} from './typer';
+import {slackClient} from '../common/slack';
 
 const KANAL = 'tilleggsstønader-slackbot'; // TODO -dev
 
 interface WebAPICallResultMedTs extends WebAPICallResult {
     ts: string;
 }
-
-const { total, repos } = await hentRepoStatus();
 
 const statusDetalj = (antall: number, tekst: string) => (antall > 0 ? `${tekst}: ${antall}` : null);
 const statusTilTekst = (status: Status) =>
@@ -63,7 +61,7 @@ const repoHarIngenPrsBlock = [
         },
     },
 ];
-const dividerBlock = { type: 'divider' };
+const dividerBlock = {type: 'divider'};
 const lagSlackMelding = (repo: RepoStatus): (KnownBlock | Block)[] => {
     if (!repo.prs.length && repo.antallDependabot === 0) {
         return repoHarIngenPrsBlock;
@@ -90,24 +88,28 @@ const lagSlackMelding = (repo: RepoStatus): (KnownBlock | Block)[] => {
     return [dividerBlock, initBlock, ...prBlocks];
 };
 
-const hovedpost = (await slackClient.chat.postMessage({
-    channel: KANAL,
-    icon_emoji: ':github:',
-    username: 'PR status',
-    text: statusTilTekst(total),
-})) as WebAPICallResultMedTs;
+export const postRepoStatusTilSlack = async () => {
+    const {total, repos} = await hentRepoStatus();
 
-console.log(`Laget tråd ${hovedpost.ts}`);
-
-for (const repo of repos.sort(sortByStatus)) {
-    const statusEmoji = mapRepoStatus(repo);
-
-    await slackClient.chat.postMessage({
+    const hovedpost = (await slackClient.chat.postMessage({
         channel: KANAL,
-        blocks: lagSlackMelding(repo),
-        icon_emoji: statusEmoji,
-        username: repo.navn,
-        thread_ts: hovedpost.ts,
-        text: 'dummy-text',
-    });
+        icon_emoji: ':github:',
+        username: 'PR status',
+        text: statusTilTekst(total),
+    })) as WebAPICallResultMedTs;
+
+    console.log(`Laget tråd ${hovedpost.ts}`);
+
+    for (const repo of repos.sort(sortByStatus)) {
+        const statusEmoji = mapRepoStatus(repo);
+
+        await slackClient.chat.postMessage({
+            channel: KANAL,
+            blocks: lagSlackMelding(repo),
+            icon_emoji: statusEmoji,
+            username: repo.navn,
+            thread_ts: hovedpost.ts,
+            text: 'dummy-text',
+        });
+    }
 }
