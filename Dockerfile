@@ -1,8 +1,8 @@
-FROM navikt/node-express:16
+FROM gcr.io/distroless/nodejs:18
 
-ADD ./ /var/server/
+ADD ./build /app
 
-RUN yarn
+WORKDIR /app
 
 EXPOSE 3000
-CMD ["yarn", "start"] 
+CMD ["--experimental-modules", "--es-module-specifier-resolution=node", "index.js"]

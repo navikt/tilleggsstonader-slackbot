@@ -9,16 +9,29 @@ on:
 env:
   IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
 
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
 jobs:
 
   build:
     name: Build and push Docker container
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: yarn
+          registry-url: "https://npm.pkg.github.com"
+      - name: Yarn install
+        run: yarn --prefer-offline --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
+      - name: Yarn build
+        run: yarn build
       - name: Build and publish Docker image
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -31,9 +44,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: nais/deploy/actions/deploy@v1
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
           RESOURCE: nais/gcp-prod.yaml
