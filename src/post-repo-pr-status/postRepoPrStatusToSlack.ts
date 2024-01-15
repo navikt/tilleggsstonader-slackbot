@@ -3,7 +3,7 @@ import {hentRepoStatus} from './repoStatus';
 import {PrStatus, RepoStatus, Status} from './typer';
 import {slackClient} from '../common/slack';
 
-const KANAL = 'tilleggsstønader-slackbot'; // TODO -dev
+const KANAL = 'tilleggsstønader-dev';
 
 interface WebAPICallResultMedTs extends WebAPICallResult {
     ts: string;
