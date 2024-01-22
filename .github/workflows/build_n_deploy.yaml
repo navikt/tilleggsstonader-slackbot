@@ -39,6 +39,12 @@ jobs:
           docker build . -t ${IMAGE}
           echo ${GITHUB_TOKEN} | docker login ghcr.io --username ${GITHUB_REPOSITORY} --password-stdin
           docker push ${IMAGE}
+      - name: Post deploy failures to Slack
+        if: github.ref == 'refs/heads/main' && failure()
+        run: |
+          curl -X POST --data "{\"text\": \"Build av $GITHUB_REPOSITORY feilet - $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\"}" $WEBHOOK_URL
+        env:
+          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   deploy:
     name: Deploy to NAIS
     needs: build
@@ -49,3 +55,9 @@ jobs:
         env:
           CLUSTER: prod-gcp
           RESOURCE: nais/gcp-prod.yaml
+      - name: Post deploy failures to Slack
+        if: github.ref == 'refs/heads/main' && failure()
+        run: |
+          curl -X POST --data "{\"text\": \"Deploy av $GITHUB_REPOSITORY feilet - $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\"}" $WEBHOOK_URL
+        env:
+          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
