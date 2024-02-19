@@ -10,6 +10,8 @@ permissions:
   contents: read
   packages: write
   id-token: write
+  pull-requests: read
+  repository-projects: read
 
 jobs:
 
