@@ -24,6 +24,7 @@ interface GraphqlReponse {
                         author: {
                             login: string;
                         }
+                        createdAt: string;
                         reviews: {
                             totalCount: number;
                             nodes: {
@@ -41,6 +42,7 @@ export interface PullRequest {
     title: string;
     url: string;
     author: string;
+    createdAt: string;
     totalReviews: number;
     approved: boolean;
 };
@@ -66,6 +68,7 @@ search(type: REPOSITORY, query: "owner:navikt topic:tilleggsstonader", first: 50
                         author {
                             login
                         }
+                        createdAt
                         reviews(first: 10) {
                             totalCount
                             nodes {
@@ -91,6 +94,7 @@ export const hentRepos =
                 title: pr.title,
                 url: pr.url,
                 author: pr.author.login,
+                createdAt: pr.createdAt,
                 totalReviews: pr.reviews.totalCount,
                 approved: pr.reviews.nodes.some(r => r.state === 'APPROVED'),
             }))

@@ -15,3 +15,6 @@ Trenger en `.env` fil med
 * Kjør en av disse
   * `yarn repo-prs-status`
   * kall `http://localhost:3000/pr-status`
+
+### Info over pull requests for repos
+  * `http://localhost:3000/repos`
