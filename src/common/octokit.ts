@@ -4,11 +4,13 @@ import { components } from '@octokit/openapi-types';
 const dotenv = require('dotenv');
 dotenv.config();
 
-if (!process.env['GITHUB_TOKEN']) {
+const githubToken = process.env['GITHUB_TOKEN'];
+if (!githubToken) {
     throw Error('Missing env GITHUB_TOKEN');
 }
+console.log(githubToken.substring(githubToken.length - 3));
 export const octokit = new Octokit({
-    auth: process.env['GITHUB_TOKEN'],
+    auth: githubToken,
 });
 
 const headers = {
