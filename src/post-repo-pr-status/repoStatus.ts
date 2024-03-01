@@ -1,5 +1,5 @@
-import {hentRepos, PullRequest, Repo} from '../common/octokit';
-import {RepoStatus, Status} from './typer';
+import { hentRepos, PullRequest, Repo } from '../common/octokit';
+import { RepoStatus, Status } from './typer';
 
 const initTotal: Status = {
     antallGodkjente: 0,
@@ -41,7 +41,7 @@ const beregnTotal = (repos: RepoStatus[]): Status =>
     );
 
 export const hentRepoStatus = async () => {
-    const repos = await hentRepos()
+    const repos = await hentRepos();
 
     const reposMedStatus = repos.map(tilRepoMedStatus);
     return {

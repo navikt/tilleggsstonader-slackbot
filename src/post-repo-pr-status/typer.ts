@@ -1,4 +1,4 @@
-import {PullRequest} from "../common/octokit";
+import { PullRequest } from '../common/octokit';
 
 export interface Status {
     antallGodkjente: number;

@@ -1,8 +1,8 @@
-import {Block, KnownBlock, WebAPICallResult} from '@slack/web-api';
-import {hentRepoStatus} from './repoStatus';
-import {RepoStatus, Status} from './typer';
-import {slackClient} from '../common/slack';
-import {PullRequest} from "../common/octokit";
+import { Block, KnownBlock, WebAPICallResult } from '@slack/web-api';
+import { hentRepoStatus } from './repoStatus';
+import { RepoStatus, Status } from './typer';
+import { slackClient } from '../common/slack';
+import { PullRequest } from '../common/octokit';
 
 const KANAL = 'tilleggsstønader-dev';
 
@@ -62,7 +62,7 @@ const repoHarIngenPrsBlock = [
         },
     },
 ];
-const dividerBlock = {type: 'divider'};
+const dividerBlock = { type: 'divider' };
 const lagSlackMelding = (repo: RepoStatus): (KnownBlock | Block)[] => {
     if (!repo.prs.length && repo.antallDependabot === 0) {
         return repoHarIngenPrsBlock;
@@ -90,7 +90,7 @@ const lagSlackMelding = (repo: RepoStatus): (KnownBlock | Block)[] => {
 };
 
 export const postRepoStatusTilSlack = async () => {
-    const {total, repos} = await hentRepoStatus();
+    const { total, repos } = await hentRepoStatus();
 
     const hovedpost = (await slackClient.chat.postMessage({
         channel: KANAL,
@@ -113,4 +113,4 @@ export const postRepoStatusTilSlack = async () => {
             text: 'dummy-text',
         });
     }
-}
+};
