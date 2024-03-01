@@ -1,3 +1,5 @@
+import {PullRequest} from "../common/octokit";
+
 export interface Status {
     antallGodkjente: number;
     antallVenter: number;
@@ -5,17 +7,11 @@ export interface Status {
     antallDependabot: number;
 }
 
-export interface PrStatus {
-    tittel: string;
-    url: string;
-    erGodkjent: boolean;
-}
-
 /**
  * @param prs populeres ikke med dependabotprs
  */
 export type RepoStatus = {
-    navn: string;
+    name: string;
     pullsUrl: string;
-    prs: PrStatus[];
+    prs: PullRequest[];
 } & Status;

@@ -1,0 +1,8 @@
+schema: schema.graphql
+extensions:
+  endpoints:
+    Endpoint:
+      url: https://docs.github.com/public/schema.docs.graphql
+      headers:
+        user-agent: ''
+      introspect: false

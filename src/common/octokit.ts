@@ -1,5 +1,4 @@
-import { Octokit } from 'octokit';
-import { components } from '@octokit/openapi-types';
+import {graphql} from "@octokit/graphql";
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -7,41 +6,94 @@ dotenv.config();
 if (!process.env['GITHUB_TOKEN']) {
     throw Error('Missing env GITHUB_TOKEN');
 }
-export const octokit = new Octokit({
-    auth: process.env['GITHUB_TOKEN'],
-});
 
 const headers = {
-    'X-GitHub-Api-Version': '2022-11-28',
+    Authorization: `Bearer ${process.env['GITHUB_TOKEN']}`
 };
 
-export type Repo = components['schemas']['repo-search-result-item'];
-export type Pr = components['schemas']['pull-request'];
-export type PrReview = components['schemas']['pull-request-review'];
-
-export interface PrMedReviews {
-    pr: Pr;
-    reviews: PrReview[];
+interface GraphqlReponse {
+    search: {
+        repos: {
+            repo: {
+                name: string;
+                url: string;
+                pullRequests: {
+                    nodes: {
+                        title: string;
+                        url: string;
+                        author: {
+                            login: string;
+                        }
+                        reviews: {
+                            totalCount: number;
+                            nodes: {
+                                state: string;
+                            }[]
+                        }
+                    }[]
+                }
+            }
+        }[]
+    }
 }
 
-export const hentRepos = (q: string) =>
-    octokit
-        .request('GET /search/repositories', {
-            q: q,
-            headers: headers,
-        })
-        .then((res) => res.data.items as Repo[]);
+export interface PullRequest {
+    title: string;
+    url: string;
+    author: string;
+    totalReviews: number;
+    approved: boolean;
+};
 
-export const hentPrs = (repo: Repo) =>
-    octokit
-        .request(`GET /repos/${repo.full_name}/pulls`, {
-            headers: headers,
-        })
-        .then((res) => res.data as Pr[]);
+export interface Repo {
+    name: string;
+    url: string;
+    pullRequests: PullRequest[]
+}
 
-export const hentReviews = (repo: string, number: number): Promise<PrReview[]> =>
-    octokit
-        .request(`GET /repos/${repo}/pulls/${number}/reviews`, {
-            headers: headers,
-        })
-        .then((res) => res.data as PrReview[]);
+const query = /* GraphQl */ `
+query {
+search(type: REPOSITORY, query: "owner:navikt topic:tilleggsstonader", first: 50) {
+    repos: edges {
+        repo: node {
+            ... on Repository {
+                name
+                url
+                pullRequests(first: 50, states: OPEN) {
+                    nodes {
+                        title
+                        url
+                        author {
+                            login
+                        }
+                        reviews(first: 10) {
+                            totalCount
+                            nodes {
+                                state
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+}
+`;
+
+export const hentRepos =
+    async (): Promise<Repo[]> => {
+        const {search} = await graphql(query, {headers}) as GraphqlReponse;
+        return search.repos.map(repo => ({
+            name: repo.repo.name,
+            url: repo.repo.url,
+            pullRequests: repo.repo.pullRequests.nodes.map(pr => ({
+                title: pr.title,
+                url: pr.url,
+                author: pr.author.login,
+                totalReviews: pr.reviews.totalCount,
+                approved: pr.reviews.nodes.some(r => r.state === 'APPROVED'),
+            }))
+        }))
+    }
+
