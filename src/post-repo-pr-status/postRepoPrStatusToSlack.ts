@@ -1,7 +1,8 @@
 import {Block, KnownBlock, WebAPICallResult} from '@slack/web-api';
 import {hentRepoStatus} from './repoStatus';
-import {PrStatus, RepoStatus, Status} from './typer';
+import {RepoStatus, Status} from './typer';
 import {slackClient} from '../common/slack';
+import {PullRequest} from "../common/octokit";
 
 const KANAL = 'tilleggsstønader-dev';
 
@@ -50,7 +51,7 @@ const mapRepoStatus = (repo: RepoStatus) => {
     }
 };
 
-const mapPrStatus = (pr: PrStatus) => (pr.erGodkjent ? okEmoji : ':construction:');
+const mapPrStatus = (pr: PullRequest) => (pr.approved ? okEmoji : ':construction:');
 
 const repoHarIngenPrsBlock = [
     {
@@ -70,7 +71,7 @@ const lagSlackMelding = (repo: RepoStatus): (KnownBlock | Block)[] => {
         type: 'section',
         text: {
             type: 'mrkdwn',
-            text: `*<${repo.pullsUrl}|${repo.navn}>*\n${statusTilTekst(repo)}`,
+            text: `*<${repo.pullsUrl}|${repo.name}>*\n${statusTilTekst(repo)}`,
         },
     };
     const prBlocks = repo.prs
@@ -80,7 +81,7 @@ const lagSlackMelding = (repo: RepoStatus): (KnownBlock | Block)[] => {
                 type: 'section',
                 text: {
                     type: 'mrkdwn',
-                    text: `${mapPrStatus(pr)} *<${pr.url}|${pr.tittel}>*`,
+                    text: `${mapPrStatus(pr)} *<${pr.url}|${pr.title}>*`,
                 },
             },
         ])
@@ -107,7 +108,7 @@ export const postRepoStatusTilSlack = async () => {
             channel: KANAL,
             blocks: lagSlackMelding(repo),
             icon_emoji: statusEmoji,
-            username: repo.navn,
+            username: repo.name,
             thread_ts: hovedpost.ts,
             text: 'dummy-text',
         });

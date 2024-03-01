@@ -1,10 +1,5 @@
-import { hentPrs, hentRepos, hentReviews, Pr, PrMedReviews, Repo } from '../common/octokit';
-import { RepoStatus, Status } from './typer';
-
-interface RepoMedPrReviews {
-    repo: Repo;
-    prs: PrMedReviews[];
-}
+import {hentRepos, PullRequest, Repo} from '../common/octokit';
+import {RepoStatus, Status} from './typer';
 
 const initTotal: Status = {
     antallGodkjente: 0,
@@ -13,28 +8,24 @@ const initTotal: Status = {
     antallDependabot: 0,
 };
 
-const erGodkjent = (pr: PrMedReviews) => pr.reviews.some((r) => r.state === 'APPROVED');
-const harReviews = (pr: PrMedReviews) => pr.reviews.length > 0;
-const harIkkeReviews = (pr: PrMedReviews) => !harReviews(pr);
-const erIkkeGodkjent = (pr: PrMedReviews) => harReviews(pr) && !erGodkjent(pr);
+const erGodkjent = (pr: PullRequest) => pr.approved;
+const harReviews = (pr: PullRequest) => pr.totalReviews > 0;
+const harIkkeReviews = (pr: PullRequest) => !harReviews(pr);
+const erIkkeGodkjent = (pr: PullRequest) => harReviews(pr) && !erGodkjent(pr);
 
-const erDependabot = (pr: Pr) => pr.user.login === 'dependabot[bot]';
+const erDependabot = (pr: PullRequest) => pr.author === 'dependabot';
 
-const tilRepoMedStatus = (repoMedPrs: RepoMedPrReviews): RepoStatus => {
-    const { repo, prs } = repoMedPrs;
-    const ikkeDependabotPrs = prs.filter((p) => !erDependabot(p.pr));
+const tilRepoMedStatus = (repo: Repo): RepoStatus => {
+    const { pullRequests } = repo;
+    const ikkeDependabotPrs = pullRequests.filter((pr) => !erDependabot(pr));
     return {
-        navn: repo.name,
-        pullsUrl: repo.html_url + '/pulls',
-        prs: ikkeDependabotPrs.map((pr) => ({
-            tittel: pr.pr.title,
-            url: pr.pr.html_url,
-            erGodkjent: erGodkjent(pr),
-        })),
+        name: repo.name,
+        pullsUrl: repo.url + '/pulls',
+        prs: ikkeDependabotPrs,
         antallGodkjente: ikkeDependabotPrs.filter(erGodkjent).length,
         antallVenter: ikkeDependabotPrs.filter(harIkkeReviews).length,
         antallUnderArbeid: ikkeDependabotPrs.filter(erIkkeGodkjent).length,
-        antallDependabot: prs.filter((p) => erDependabot(p.pr)).length,
+        antallDependabot: pullRequests.filter((p) => erDependabot(p)).length,
     };
 };
 
@@ -49,32 +40,12 @@ const beregnTotal = (repos: RepoStatus[]): Status =>
         initTotal
     );
 
-const hentPrsMedReviews = async (repo: Repo): Promise<PrMedReviews[]> => {
-    const repoPrs = await hentPrs(repo);
-    return Promise.all(
-        repoPrs.map(async (pr) => {
-            const reviews = erDependabot(pr) ? [] : await hentReviews(repo.full_name, pr.number);
-            return { pr, reviews };
-        })
-    );
-};
-
-export const hentPrsTilRepos = (repos: Repo[]): Promise<RepoMedPrReviews[]> =>
-    Promise.all(
-        repos.map(async (repo) => {
-            const prs = await hentPrsMedReviews(repo);
-            return { repo, prs };
-        })
-    );
-
 export const hentRepoStatus = async () => {
-    const repoMedStatus: RepoMedPrReviews[] = await hentRepos(
-        'owner:navikt+topic:tilleggsstonader'
-    ).then(hentPrsTilRepos);
-    const repos: RepoStatus[] = repoMedStatus.map((repo) => tilRepoMedStatus(repo));
+    const repos = await hentRepos()
 
+    const reposMedStatus = repos.map(tilRepoMedStatus);
     return {
-        repos: repos,
-        total: beregnTotal(repos),
+        repos: reposMedStatus,
+        total: beregnTotal(reposMedStatus),
     };
 };
