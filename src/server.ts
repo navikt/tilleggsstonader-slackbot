@@ -3,7 +3,8 @@ import cron from 'node-cron';
 import { slackClient } from './common/slack';
 import * as bodyParser from 'body-parser';
 import { params } from './constants';
-import {postRepoStatusTilSlack} from "./post-repo-pr-status/postRepoPrStatusToSlack";
+import { postRepoStatusTilSlack } from './post-repo-pr-status/postRepoPrStatusToSlack';
+import { genererHtml } from './post-repo-pr-status/repoHtml';
 
 const sendSpørsmålOmKontordag = (kanal: string, kanalId: string) => {
     slackClient.chat
@@ -67,6 +68,11 @@ app.get('/kontordag', (_, res) => {
 app.get('/pr-status', (_, res) => {
     postRepoStatusTilSlack();
     res.status(200).send();
+});
+
+app.get('/repos', async (_, res) => {
+    const html = await genererHtml();
+    res.status(200).send(html);
 });
 
 app.listen(PORT, () => {

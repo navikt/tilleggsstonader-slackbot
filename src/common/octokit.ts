@@ -1,4 +1,4 @@
-import {graphql} from "@octokit/graphql";
+import { graphql } from '@octokit/graphql';
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -8,7 +8,7 @@ if (!process.env['GITHUB_TOKEN']) {
 }
 
 const headers = {
-    Authorization: `Bearer ${process.env['GITHUB_TOKEN']}`
+    Authorization: `Bearer ${process.env['GITHUB_TOKEN']}`,
 };
 
 interface GraphqlReponse {
@@ -23,32 +23,34 @@ interface GraphqlReponse {
                         url: string;
                         author: {
                             login: string;
-                        }
+                        };
+                        createdAt: string;
                         reviews: {
                             totalCount: number;
                             nodes: {
                                 state: string;
-                            }[]
-                        }
-                    }[]
-                }
-            }
-        }[]
-    }
+                            }[];
+                        };
+                    }[];
+                };
+            };
+        }[];
+    };
 }
 
 export interface PullRequest {
     title: string;
     url: string;
     author: string;
+    createdAt: string;
     totalReviews: number;
     approved: boolean;
-};
+}
 
 export interface Repo {
     name: string;
     url: string;
-    pullRequests: PullRequest[]
+    pullRequests: PullRequest[];
 }
 
 const query = /* GraphQl */ `
@@ -66,6 +68,7 @@ search(type: REPOSITORY, query: "owner:navikt topic:tilleggsstonader", first: 50
                         author {
                             login
                         }
+                        createdAt
                         reviews(first: 10) {
                             totalCount
                             nodes {
@@ -81,19 +84,18 @@ search(type: REPOSITORY, query: "owner:navikt topic:tilleggsstonader", first: 50
 }
 `;
 
-export const hentRepos =
-    async (): Promise<Repo[]> => {
-        const {search} = await graphql(query, {headers}) as GraphqlReponse;
-        return search.repos.map(repo => ({
-            name: repo.repo.name,
-            url: repo.repo.url,
-            pullRequests: repo.repo.pullRequests.nodes.map(pr => ({
-                title: pr.title,
-                url: pr.url,
-                author: pr.author.login,
-                totalReviews: pr.reviews.totalCount,
-                approved: pr.reviews.nodes.some(r => r.state === 'APPROVED'),
-            }))
-        }))
-    }
-
+export const hentRepos = async (): Promise<Repo[]> => {
+    const { search } = (await graphql(query, { headers })) as GraphqlReponse;
+    return search.repos.map((repo) => ({
+        name: repo.repo.name,
+        url: repo.repo.url,
+        pullRequests: repo.repo.pullRequests.nodes.map((pr) => ({
+            title: pr.title,
+            url: pr.url,
+            author: pr.author.login,
+            createdAt: pr.createdAt,
+            totalReviews: pr.reviews.totalCount,
+            approved: pr.reviews.nodes.some((r) => r.state === 'APPROVED'),
+        })),
+    }));
+};
