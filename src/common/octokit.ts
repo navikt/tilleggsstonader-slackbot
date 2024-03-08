@@ -25,11 +25,9 @@ interface GraphqlReponse {
                             login: string;
                         };
                         createdAt: string;
+                        reviewDecision: string;
                         reviews: {
                             totalCount: number;
-                            nodes: {
-                                state: string;
-                            }[];
                         };
                     }[];
                 };
@@ -68,12 +66,10 @@ search(type: REPOSITORY, query: "owner:navikt topic:tilleggsstonader", first: 50
                         author {
                             login
                         }
+                        reviewDecision
                         createdAt
-                        reviews(first: 10) {
+                        reviews(first: 0) {
                             totalCount
-                            nodes {
-                                state
-                            }
                         }
                     }
                 }
@@ -86,6 +82,7 @@ search(type: REPOSITORY, query: "owner:navikt topic:tilleggsstonader", first: 50
 
 export const hentRepos = async (): Promise<Repo[]> => {
     const { search } = (await graphql(query, { headers })) as GraphqlReponse;
+    console.log(JSON.stringify(search, null, 2))
     return search.repos.map((repo) => ({
         name: repo.repo.name,
         url: repo.repo.url,
@@ -95,7 +92,7 @@ export const hentRepos = async (): Promise<Repo[]> => {
             author: pr.author.login,
             createdAt: pr.createdAt,
             totalReviews: pr.reviews.totalCount,
-            approved: pr.reviews.nodes.some((r) => r.state === 'APPROVED'),
+            approved: pr.reviewDecision === 'APPROVED',
         })),
     }));
 };
