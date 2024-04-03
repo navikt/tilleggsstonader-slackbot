@@ -40,13 +40,13 @@ const sendSpørsmålOmKontordag = (kanal: string, kanalId: string) => {
         });
 };
 
-cron.schedule('0 13 * * 0-4', () => {
+cron.schedule('0 12 * * 0-4', () => {
     console.log('Sender spørsmål om kontordag');
     sendSpørsmålOmKontordag('team_tilleggsstønader', 'C049HPU424F');
 });
 
 //mandag kl 8:30
-cron.schedule('30 8 * * 1', () => {
+cron.schedule('30 7 * * 1', () => {
     console.log('Poster melding til slack');
     postRepoStatusTilSlack();
 });
