@@ -82,7 +82,6 @@ search(type: REPOSITORY, query: "owner:navikt topic:tilleggsstonader", first: 50
 
 export const hentRepos = async (): Promise<Repo[]> => {
     const { search } = (await graphql(query, { headers })) as GraphqlReponse;
-    console.log(JSON.stringify(search, null, 2));
     return search.repos.map((repo) => ({
         name: repo.repo.name,
         url: repo.repo.url,
