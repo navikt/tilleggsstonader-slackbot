@@ -3,7 +3,6 @@ import cron from 'node-cron';
 import { slackClient } from './common/slack';
 import * as bodyParser from 'body-parser';
 import { params } from './constants';
-import { postRepoStatusTilSlack } from './post-repo-pr-status/postRepoPrStatusToSlack';
 import { genererHtml } from './post-repo-pr-status/repoHtml';
 
 const sendSpørsmålOmKontordag = (kanal: string, kanalId: string) => {
@@ -45,12 +44,6 @@ cron.schedule('0 12 * * 0-4', () => {
     sendSpørsmålOmKontordag('team_tilleggsstønader', 'C049HPU424F');
 });
 
-//mandag kl 8:30
-cron.schedule('30 7 * * 1', () => {
-    console.log('Poster melding til slack');
-    postRepoStatusTilSlack();
-});
-
 const PORT = process.env.PORT || 3000;
 const app = express();
 
@@ -62,11 +55,6 @@ app.use(bodyParser.json({ limit: '20mb' }));
 
 app.get('/kontordag', (_, res) => {
     sendSpørsmålOmKontordag('team_tilleggsstønader', 'C049HPU424F');
-    res.status(200).send();
-});
-
-app.get('/pr-status', (_, res) => {
-    postRepoStatusTilSlack();
     res.status(200).send();
 });
 

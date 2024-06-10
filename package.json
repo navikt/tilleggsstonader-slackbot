@@ -6,8 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "ncc build src/server.ts -o build",
-    "start:dev": "ncc run src/server.ts",
-    "repo-prs-status": "ncc run src/post-repo-pr-status/postRepoPrStatusToSlack.ts"
+    "start:dev": "ncc run src/server.ts"
   },
   "author": "NAV",
   "license": "ISC",
