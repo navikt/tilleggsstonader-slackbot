@@ -4,6 +4,7 @@ import { slackClient } from './common/slack';
 import * as bodyParser from 'body-parser';
 import { params } from './constants';
 import { genererHtml } from './post-repo-pr-status/repoHtml';
+import { settVaktForDagen } from './tsVakt';
 
 const sendSpørsmålOmKontordag = (kanal: string, kanalId: string) => {
     slackClient.chat
@@ -44,6 +45,11 @@ cron.schedule('0 12 * * 0-4', () => {
     sendSpørsmålOmKontordag('team_tilleggsstønader', 'C049HPU424F');
 });
 
+cron.schedule('0 6 * * *', () => {
+    console.log('Setter vakt');
+    settVaktForDagen();
+});
+
 const PORT = process.env.PORT || 3000;
 const app = express();
 
@@ -61,6 +67,11 @@ app.get('/kontordag', (_, res) => {
 app.get('/repos', async (_, res) => {
     const html = await genererHtml();
     res.status(200).send(html);
+});
+
+app.get('/vakt', async (_, res) => {
+    settVaktForDagen();
+    res.status(200).send();
 });
 
 app.listen(PORT, () => {
