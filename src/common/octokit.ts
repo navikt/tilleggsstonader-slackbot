@@ -7,7 +7,7 @@ if (!process.env['GITHUB_TOKEN']) {
     throw Error('Missing env GITHUB_TOKEN');
 }
 
-const headers = {
+export const headers = {
     Authorization: `Bearer ${process.env['GITHUB_TOKEN']}`,
 };
 

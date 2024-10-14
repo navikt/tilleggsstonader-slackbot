@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "build": "ncc build src/server.ts -o build",
-    "start:dev": "ncc run src/server.ts"
+    "start:dev": "ncc run src/server.ts",
+    "user-status": "ncc run src/user-status.ts"
   },
   "author": "NAV",
   "license": "ISC",
