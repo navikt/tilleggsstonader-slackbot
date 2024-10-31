@@ -2,12 +2,12 @@ import { slackClient } from './common/slack';
 
 const vakt = [
     'U02BG835PU5',
-    'U01BH55AZSR',
+    'U07H14VA9MK',
     'U015NN0KN79',
     'U8QJ01P7C',
-    'U012ZRS991A',
-    'U012ZRS991A',
-    'U012ZRS991A',
+    'U0261H41RPA',
+    'U0261H41RPA',
+    'U0261H41RPA',
 ];
 
 /**
