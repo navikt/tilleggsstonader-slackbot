@@ -3,9 +3,16 @@ import { RepoStatus } from './typer';
 import { PullRequest } from '../common/octokit';
 
 export const genererHtml = async (): Promise<String> => {
-    const { total, repos } = await hentRepoStatus();
-    const reposHtml = repos.sort(sort).map((repo) => repoHtml(repo));
-    return `<html lang="no"><body>${reposHtml.join('\n')}</body></html>`;
+    const { repos } = await hentRepoStatus();
+    const reposHtml = repos.sort(sorterPrs).map((repo) => repoHtml(repo));
+    const dependabotPrs = repos.sort(sorterDependabotPrs).map((repo) => repoMedDependabotPrs(repo));
+    return `<html lang="no">
+                <body>
+                    ${reposHtml.join('\n')}
+                    <div style="font-size: 22px">Dependabot</div>
+                    ${dependabotPrs.join('\n')}
+                </body>
+            </html>`;
 };
 
 const repoHtml = (repo: RepoStatus) => {
@@ -17,7 +24,13 @@ const repoHtml = (repo: RepoStatus) => {
             ? '<span style="font-size: 12px"> (Dependabots:' + repo.antallDependabot + ')</span>'
             : ''
     }`;
-    return `<div>${title}${subtitle}${listPrs(repo)}</div>`;
+    return `<div>${title}${subtitle}${listPrs(repo.prs)}</div>`;
+};
+
+const repoMedDependabotPrs = (repo: RepoStatus) => {
+    if (repo.prsDependabot.length === 0) return null;
+    const title = `<span><a href="${repo.pullsUrl}">${repo.name}</a></span>`;
+    return `<div style="font-size: 14px">${title}${listPrs(repo.prsDependabot)}</div>`;
 };
 
 const headerSize = (repo: RepoStatus): number => {
@@ -30,9 +43,9 @@ const headerSize = (repo: RepoStatus): number => {
     }
 };
 
-const listPrs = (repo: RepoStatus) => {
+const listPrs = (pullRequests: PullRequest[]) => {
     return `<ul>
-        ${repo.prs
+        ${pullRequests
             .map((pr) => {
                 const checkIcon = `${pr.approved ? '<span>&#9989;</span>' : ''}`;
                 const prTitle = `<a href="${pr.url}">${pr.title}</a>`;
@@ -50,10 +63,14 @@ const antallDager = (pr: PullRequest) =>
         (new Date().getTime() - new Date(pr.createdAt.substring(0, 10)).getTime()) / DØGN_I_MS
     );
 
-const sort = (a: RepoStatus, b: RepoStatus) => {
+const sorterPrs = (a: RepoStatus, b: RepoStatus) => {
     if (a.prs.length !== b.prs.length) {
         return b.prs.length - a.prs.length;
     } else {
-        return b.antallDependabot - a.antallDependabot;
+        return a.name.localeCompare(b.name);
     }
+};
+
+const sorterDependabotPrs = (a: RepoStatus, b: RepoStatus) => {
+    return a.name.localeCompare(b.name);
 };

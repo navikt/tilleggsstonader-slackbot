@@ -14,4 +14,5 @@ export type RepoStatus = {
     name: string;
     pullsUrl: string;
     prs: PullRequest[];
+    prsDependabot: PullRequest[];
 } & Status;

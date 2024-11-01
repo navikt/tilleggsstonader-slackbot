@@ -22,6 +22,7 @@ const tilRepoMedStatus = (repo: Repo): RepoStatus => {
         name: repo.name,
         pullsUrl: repo.url + '/pulls',
         prs: ikkeDependabotPrs,
+        prsDependabot: pullRequests.filter(erDependabot),
         antallGodkjente: ikkeDependabotPrs.filter(erGodkjent).length,
         antallVenter: ikkeDependabotPrs.filter(harIkkeReviews).length,
         antallUnderArbeid: ikkeDependabotPrs.filter(erIkkeGodkjent).length,
