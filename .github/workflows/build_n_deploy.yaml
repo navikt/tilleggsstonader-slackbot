@@ -33,8 +33,6 @@ jobs:
         id: docker-push
         with:
           team: tilleggsstonader
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
       - name: Post deploy failures to Slack
         if: github.ref == 'refs/heads/main' && failure()
         run: |
