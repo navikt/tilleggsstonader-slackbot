@@ -18,3 +18,6 @@ Trenger en `.env` fil med
 
 ### Info over pull requests for repos
   * `http://localhost:3000/repos`
+
+## Kode generert av GitHub Copilot
+Dette repoet bruker GitHub Copilot til å generere kode.
