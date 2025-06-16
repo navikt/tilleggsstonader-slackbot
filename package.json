@@ -11,19 +11,19 @@
   "author": "NAV",
   "license": "ISC",
   "dependencies": {
-    "@octokit/graphql": "^8.2.1",
-    "@slack/web-api": "^7.9.1",
-    "axios": "^1.9.0",
+    "@octokit/graphql": "^9.0.1",
+    "@slack/web-api": "^7.9.2",
+    "axios": "^1.10.0",
     "body-parser": "^2.2.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "node-cron": "^3.0.3"
+    "node-cron": "^4.1.0"
   },
   "devDependencies": {
-    "@types/express": "^5.0.1",
+    "@types/express": "^5.0.3",
     "@types/node-cron": "^3.0.11",
     "@vercel/ncc": "^0.38.3",
     "prettier": "^3.5.3",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   }
 }
