@@ -4,7 +4,7 @@ const vakt = [
     'U02BG835PU5', // Runar
     'U07H14VA9MK', // Nibedita
     'U08P2B5UMV3', // Andreas
-    'U015NN0KN79', // Sara
+    'U08JRN6KBUN', // Filip
     'U0261H41RPA', // Sigmund
     'U0261H41RPA',
     'U0261H41RPA',
