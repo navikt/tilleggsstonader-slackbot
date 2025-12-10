@@ -9,7 +9,7 @@ export const genererHtml = async (): Promise<String> => {
     return `<html lang="no">
                 <body>
                     ${reposHtml.join('\n')}
-                    <div style="font-size: 22px">Dependabot</div>
+                    <div style="font-size: 22px">Fra bots</div>
                     ${dependabotPrs.join('\n')}
                 </body>
             </html>`;
@@ -20,23 +20,23 @@ const repoHtml = (repo: RepoStatus) => {
         repo.name
     }</a></span>`;
     const subtitle = `${
-        repo.antallDependabot > 0
-            ? '<span style="font-size: 12px"> (Dependabots:' + repo.antallDependabot + ')</span>'
+        repo.antallFraBots > 0
+            ? '<span style="font-size: 12px"> (Fra bots:' + repo.antallFraBots + ')</span>'
             : ''
     }`;
     return `<div>${title}${subtitle}${listPrs(repo.prs)}</div>`;
 };
 
 const repoMedDependabotPrs = (repo: RepoStatus) => {
-    if (repo.prsDependabot.length === 0) return null;
+    if (repo.prsFraBots.length === 0) return null;
     const title = `<span><a href="${repo.pullsUrl}">${repo.name}</a></span>`;
-    return `<div style="font-size: 14px">${title}${listPrs(repo.prsDependabot)}</div>`;
+    return `<div style="font-size: 14px">${title}${listPrs(repo.prsFraBots)}</div>`;
 };
 
 const headerSize = (repo: RepoStatus): number => {
     if (repo.prs.length > 0) {
         return 22;
-    } else if (repo.antallDependabot > 0) {
+    } else if (repo.antallFraBots > 0) {
         return 14;
     } else {
         return 12;

@@ -5,7 +5,7 @@ const initTotal: Status = {
     antallGodkjente: 0,
     antallVenter: 0,
     antallUnderArbeid: 0,
-    antallDependabot: 0,
+    antallFraBots: 0,
 };
 
 const erGodkjent = (pr: PullRequest) => pr.approved;
@@ -14,19 +14,21 @@ const harIkkeReviews = (pr: PullRequest) => !harReviews(pr);
 const erIkkeGodkjent = (pr: PullRequest) => harReviews(pr) && !erGodkjent(pr);
 
 const erDependabot = (pr: PullRequest) => pr.author === 'dependabot';
+const erGithubActionsBot = (pr: PullRequest) => pr.author === 'github-actions';
 
 const tilRepoMedStatus = (repo: Repo): RepoStatus => {
     const { pullRequests } = repo;
-    const ikkeDependabotPrs = pullRequests.filter((pr) => !erDependabot(pr));
+    const ikkeFraBots = pullRequests.filter((pr) => !erDependabot(pr) && !erGithubActionsBot(pr));
+    const prsFraBots = pullRequests.filter(erDependabot || erGithubActionsBot)
     return {
         name: repo.name,
         pullsUrl: repo.url + '/pulls',
-        prs: ikkeDependabotPrs,
-        prsDependabot: pullRequests.filter(erDependabot),
-        antallGodkjente: ikkeDependabotPrs.filter(erGodkjent).length,
-        antallVenter: ikkeDependabotPrs.filter(harIkkeReviews).length,
-        antallUnderArbeid: ikkeDependabotPrs.filter(erIkkeGodkjent).length,
-        antallDependabot: pullRequests.filter((p) => erDependabot(p)).length,
+        prs: ikkeFraBots,
+        prsFraBots: prsFraBots,
+        antallGodkjente: ikkeFraBots.filter(erGodkjent).length,
+        antallVenter: ikkeFraBots.filter(harIkkeReviews).length,
+        antallUnderArbeid: ikkeFraBots.filter(erIkkeGodkjent).length,
+        antallFraBots: prsFraBots.length,
     };
 };
 
@@ -36,7 +38,7 @@ const beregnTotal = (repos: RepoStatus[]): Status =>
             antallGodkjente: acc.antallGodkjente + r.antallGodkjente,
             antallVenter: acc.antallVenter + r.antallVenter,
             antallUnderArbeid: acc.antallUnderArbeid + r.antallUnderArbeid,
-            antallDependabot: acc.antallDependabot + r.antallDependabot,
+            antallFraBots: acc.antallFraBots + r.antallFraBots,
         }),
         initTotal
     );

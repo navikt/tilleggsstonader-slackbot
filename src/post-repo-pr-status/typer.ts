@@ -4,7 +4,7 @@ export interface Status {
     antallGodkjente: number;
     antallVenter: number;
     antallUnderArbeid: number;
-    antallDependabot: number;
+    antallFraBots: number;
 }
 
 /**
@@ -14,5 +14,5 @@ export type RepoStatus = {
     name: string;
     pullsUrl: string;
     prs: PullRequest[];
-    prsDependabot: PullRequest[];
+    prsFraBots: PullRequest[];
 } & Status;
