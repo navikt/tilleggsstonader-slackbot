@@ -7,4 +7,4 @@ WORKDIR /app
 COPY ./build /app
 
 EXPOSE 3000
-CMD ["node", "index.js"]
+CMD ["index.js"]
