@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Slackbot for Team tilleggsstønader",
   "main": "./src/server.ts",
-  "type": "module",
   "scripts": {
     "build": "ncc build src/server.ts -o build",
     "start:dev": "ncc run src/server.ts"
