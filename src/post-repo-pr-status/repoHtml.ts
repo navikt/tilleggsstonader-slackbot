@@ -7,6 +7,17 @@ export const genererHtml = async (): Promise<String> => {
     const reposHtml = repos.sort(sorterPrs).map((repo) => repoHtml(repo));
     const dependabotPrs = repos.sort(sorterDependabotPrs).map((repo) => repoMedDependabotPrs(repo));
     return `<html lang="no">
+                <head>
+                    <title>PR-status for Tilleggsstønader</title>
+                    <link rel="preconnect" href="https://fonts.googleapis.com">
+                    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+                    <style>
+                        body {
+                            font-family: 'Source Sans 3', sans-serif;
+                        }
+                    </style>
+                </head>
                 <body>
                     ${reposHtml.join('\n')}
                     <div style="font-size: 22px">Fra bots</div>
