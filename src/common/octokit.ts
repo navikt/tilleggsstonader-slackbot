@@ -26,6 +26,7 @@ interface GraphqlReponse {
                         };
                         createdAt: string;
                         reviewDecision: string;
+                        isDraft: boolean;
                         reviews: {
                             totalCount: number;
                         };
@@ -43,6 +44,7 @@ export interface PullRequest {
     createdAt: string;
     totalReviews: number;
     approved: boolean;
+    isDraft: boolean;
 }
 
 export interface Repo {
@@ -68,6 +70,7 @@ search(type: REPOSITORY, query: "owner:navikt topic:tilleggsstonader", first: 50
                         }
                         reviewDecision
                         createdAt
+                        isDraft
                         reviews(first: 0) {
                             totalCount
                         }
@@ -92,6 +95,7 @@ export const hentRepos = async (): Promise<Repo[]> => {
             createdAt: pr.createdAt,
             totalReviews: pr.reviews.totalCount,
             approved: pr.reviewDecision === 'APPROVED',
+            isDraft: pr.isDraft,
         })),
     }));
 };

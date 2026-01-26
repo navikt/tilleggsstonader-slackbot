@@ -43,13 +43,16 @@ const headerSize = (repo: RepoStatus): number => {
     }
 };
 
+const draftTag = 'background-color: #6a737d; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-right: 4px;';
+
 const listPrs = (pullRequests: PullRequest[]) => {
     return `<ul>
         ${pullRequests
             .map((pr) => {
                 const checkIcon = `${pr.approved ? '<span>&#9989;</span>' : ''}`;
+                const draftBadge = `${pr.isDraft ? `<span style="${draftTag}">DRAFT</span>` : ''}`;
                 const prTitle = `<a href="${pr.url}">${pr.title}</a>`;
-                return `<li>${prTitle} ${checkIcon} ${pr.author} (${antallDager(
+                return `<li>${draftBadge}${prTitle} ${checkIcon} ${pr.author} (${antallDager(
                     pr
                 )} dager siden)</li>`;
             })
