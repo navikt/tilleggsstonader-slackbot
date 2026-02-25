@@ -33,12 +33,6 @@ jobs:
         id: docker-push
         with:
           team: tilleggsstonader
-      - name: Post deploy failures to Slack
-        if: github.ref == 'refs/heads/main' && failure()
-        run: |
-          curl -X POST --data "{\"text\": \"Build av $GITHUB_REPOSITORY feilet - $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\"}" $WEBHOOK_URL
-        env:
-          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     outputs:
       image: ${{ steps.docker-push.outputs.image }}
   deploy:
@@ -52,9 +46,3 @@ jobs:
           CLUSTER: prod-gcp
           RESOURCE: nais/gcp-prod.yaml
           IMAGE: ${{ needs.build.outputs.image }}
-      - name: Post deploy failures to Slack
-        if: github.ref == 'refs/heads/main' && failure()
-        run: |
-          curl -X POST --data "{\"text\": \"Deploy av $GITHUB_REPOSITORY feilet - $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\"}" $WEBHOOK_URL
-        env:
-          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
