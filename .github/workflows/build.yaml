@@ -1,0 +1,15 @@
+name: Bygg app
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Bygger appen"
+    permissions:
+      contents: read
+    uses: navikt/tilleggsstonader/.github/workflows/ts-build.yml@main
+    secrets: inherit
+    with:
+      node-version: "22"

@@ -4,6 +4,7 @@
   "description": "Slackbot for Team tilleggsstønader",
   "main": "./src/server.ts",
   "scripts": {
+    "ci": "yarn --prefer-offline --frozen-lockfile",
     "build": "ncc build src/server.ts -o build",
     "start:dev": "ncc run src/server.ts"
   },
