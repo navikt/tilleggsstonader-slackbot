@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
-    "module": "esnext",
+    "module": "NodeNext",
     "target": "es2017",
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
+    "rootDir": "./src",
     "outDir": "./build",
     "allowJs": false,
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "strict": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   }
 }

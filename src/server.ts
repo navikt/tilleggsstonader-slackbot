@@ -1,7 +1,6 @@
-import * as express from 'express';
+import express, { Request, Response } from 'express';
 import cron from 'node-cron';
 import { slackClient } from './common/slack';
-import * as bodyParser from 'body-parser';
 import { params } from './constants';
 import { genererHtml } from './post-repo-pr-status/repoHtml';
 import { settVaktForDagen } from './tsVakt';
@@ -53,23 +52,23 @@ cron.schedule('0 6 * * *', () => {
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-app.get('/isAlive', (req, res) => {
+app.get('/isAlive', (_req: Request, res: Response): void => {
     res.status(200).send();
 });
 
-app.use(bodyParser.json({ limit: '20mb' }));
+app.use(express.json({ limit: '20mb' }));
 
-app.get('/kontordag', (_, res) => {
+app.get('/kontordag', (_req: Request, res: Response): void => {
     sendSpørsmålOmKontordag('team_tilleggsstønader', 'C049HPU424F');
     res.status(200).send();
 });
 
-app.get('/repos', async (_, res) => {
+app.get('/repos', async (_req: Request, res: Response): Promise<void> => {
     const html = await genererHtml();
     res.status(200).send(html);
 });
 
-app.get('/vakt', async (_, res) => {
+app.get('/vakt', async (_req: Request, res: Response): Promise<void> => {
     settVaktForDagen();
     res.status(200).send();
 });
