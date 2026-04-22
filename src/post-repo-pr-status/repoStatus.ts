@@ -13,13 +13,16 @@ const harReviews = (pr: PullRequest) => pr.totalReviews > 0;
 const harIkkeReviews = (pr: PullRequest) => !harReviews(pr);
 const erIkkeGodkjent = (pr: PullRequest) => harReviews(pr) && !erGodkjent(pr);
 
-const erDependabot = (pr: PullRequest) => pr.author === 'dependabot';
-const erGithubActionsBot = (pr: PullRequest) => pr.author === 'github-actions';
+const erDependabot = (pr: PullRequest) =>
+    pr.author === 'dependabot' || pr.author === 'dependabot[bot]';
+const erGithubActionsBot = (pr: PullRequest) =>
+    pr.author === 'github-actions' || pr.author === 'github-actions[bot]';
+const erBot = (pr: PullRequest) => erDependabot(pr) || erGithubActionsBot(pr);
 
 const tilRepoMedStatus = (repo: Repo): RepoStatus => {
     const { pullRequests } = repo;
-    const ikkeFraBots = pullRequests.filter((pr) => !erDependabot(pr) && !erGithubActionsBot(pr));
-    const prsFraBots = pullRequests.filter(erDependabot || erGithubActionsBot)
+    const ikkeFraBots = pullRequests.filter((pr) => !erBot(pr));
+    const prsFraBots = pullRequests.filter(erBot);
     return {
         name: repo.name,
         pullsUrl: repo.url + '/pulls',
