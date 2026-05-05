@@ -13,7 +13,7 @@
   "dependencies": {
     "@octokit/graphql": "^9.0.1",
     "@slack/web-api": "^7.15.0",
-    "axios": "^1.15.0",
+    "axios": "^1.15.2",
     "body-parser": "^2.2.0",
     "dotenv": "^17.4.1",
     "express": "^5.1.0",
