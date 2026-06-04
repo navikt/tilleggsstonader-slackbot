@@ -49,7 +49,7 @@ cron.schedule('0 6 * * *', () => {
     settVaktForDagen();
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3030;
 const app = express();
 
 app.get('/isAlive', (_req: Request, res: Response): void => {
