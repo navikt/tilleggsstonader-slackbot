@@ -27,8 +27,23 @@ interface GraphqlReponse {
                         createdAt: string;
                         reviewDecision: string;
                         isDraft: boolean;
+                        comments: {
+                            totalCount: number;
+                        };
+                        reviewThreads: {
+                            totalCount: number;
+                        };
                         reviews: {
                             totalCount: number;
+                        };
+                        commits: {
+                            nodes: {
+                                commit: {
+                                    statusCheckRollup: {
+                                        state: string;
+                                    } | null;
+                                };
+                            }[];
                         };
                     }[];
                 };
@@ -43,8 +58,11 @@ export interface PullRequest {
     author: string;
     createdAt: string;
     totalReviews: number;
+    issueComments: number;
+    reviewComments: number;
     approved: boolean;
     isDraft: boolean;
+    checksState: string | null;
 }
 
 export interface Repo {
@@ -71,8 +89,23 @@ search(type: REPOSITORY, query: "owner:navikt topic:tilleggsstonader", first: 50
                         reviewDecision
                         createdAt
                         isDraft
+                        comments {
+                            totalCount
+                        }
+                        reviewThreads(first: 0) {
+                            totalCount
+                        }
                         reviews(first: 0) {
                             totalCount
+                        }
+                        commits(last: 1) {
+                            nodes {
+                                commit {
+                                    statusCheckRollup {
+                                        state
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -94,8 +127,11 @@ export const hentRepos = async (): Promise<Repo[]> => {
             author: pr.author.login,
             createdAt: pr.createdAt,
             totalReviews: pr.reviews.totalCount,
+            issueComments: pr.comments.totalCount,
+            reviewComments: pr.reviewThreads.totalCount,
             approved: pr.reviewDecision === 'APPROVED',
             isDraft: pr.isDraft,
+            checksState: pr.commits.nodes[0]?.commit.statusCheckRollup?.state ?? null,
         })),
     }));
 };

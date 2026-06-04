@@ -75,6 +75,29 @@ export const genererHtml = async (): Promise<String> => {
                             background-color: var(--draft-bg);
                             color: var(--draft-text);
                         }
+
+                        table {
+                            border-collapse: collapse;
+                            margin: 6px 0 14px 0;
+                            width: 100%;
+                            max-width: 1200px;
+                        }
+
+                        th, td {
+                            border-bottom: 1px solid rgba(127, 127, 127, 0.3);
+                            font-size: 14px;
+                            padding: 6px 8px;
+                            text-align: left;
+                            vertical-align: top;
+                        }
+
+                        th {
+                            font-weight: 600;
+                        }
+
+                        tr:nth-child(even) {
+                            background-color: rgba(127, 127, 127, 0.08);
+                        }
                     </style>
                 </head>
                 <body>
@@ -133,18 +156,53 @@ const headerSize = (repo: RepoStatus): number => {
 };
 
 const listPrs = (pullRequests: PullRequest[]) => {
-    return `<ul>
-        ${pullRequests
-            .map((pr) => {
-                const checkIcon = `${pr.approved ? '<span>&#9989;</span>' : ''}`;
-                const draftBadge = `${pr.isDraft ? `<span class="draft-badge" style="padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-right: 4px;">DRAFT</span>` : ''}`;
-                const prTitle = `<a href="${pr.url}">${pr.title}</a>`;
-                return `<li>${draftBadge}${prTitle} ${checkIcon} ${pr.author} (${antallDager(
-                    pr
-                )} dager siden)</li>`;
-            })
-            .join('\n')}
-    </ul>`;
+    return `<table>
+        <thead>
+            <tr>
+                <th>PR</th>
+                <th>Forfatter</th>
+                <th>Alder</th>
+                <th>Kommentarer</th>
+                <th>Checks</th>
+                <th>Review</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${pullRequests
+                .map((pr) => {
+                    const draftBadge = `${pr.isDraft ? `<span class="draft-badge" style="padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-right: 4px;">DRAFT</span>` : ''}`;
+                    const prTitle = `<a href="${pr.url}">${pr.title}</a>`;
+                    const comments = `<span>💬 ${pr.issueComments} / 🗨️ ${pr.reviewComments}</span>`;
+                    const reviewIcon = `${pr.approved ? '&#9989;' : ''}`;
+                    return `<tr>
+                        <td>${draftBadge}${prTitle}</td>
+                        <td>${pr.author}</td>
+                        <td>${antallDager(pr)} dager</td>
+                        <td>${comments}</td>
+                        <td>${checksIkon(pr.checksState)}</td>
+                        <td>${reviewIcon}</td>
+                    </tr>`;
+                })
+                .join('\n')}
+        </tbody>
+    </table>`;
+};
+
+const checksIkon = (checksState: string | null) => {
+    switch (checksState) {
+        case 'SUCCESS':
+            return '&#9989;';
+        case 'FAILURE':
+        case 'ERROR':
+            return '&#10060;';
+        case 'PENDING':
+        case 'EXPECTED':
+            return '&#128993;';
+        case null:
+            return '&#9203;';
+        default:
+            return '&#9203;';
+    }
 };
 
 const DØGN_I_MS = 1000 * 3600 * 24;
