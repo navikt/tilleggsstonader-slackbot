@@ -6,8 +6,12 @@ import { hentPakkeVersjoner, PakkeVersjon } from '../pakke-versjoner/pakkeVersjo
 export const genererHtml = async (): Promise<String> => {
     const { repos } = await hentRepoStatus();
     const pakkeVersjoner = await hentPakkeVersjoner();
-    const reposHtml = repos.sort(sorterPrs).map((repo) => repoHtml(repo));
-    const dependabotPrs = repos.sort(sorterDependabotPrs).map((repo) => repoMedDependabotPrs(repo));
+    const sortedRepos = repos.sort(sorterPrs);
+    const reposWithPrs = sortedRepos.filter((r) => r.prs.length > 0);
+    const reposWithBotPrs = sortedRepos.filter((r) => r.prsFraBots.length > 0);
+    const reposUtenPrsHtml = reposUtenPrListe(
+        sortedRepos.filter((r) => r.prs.length === 0 && r.prsFraBots.length === 0)
+    );
     return `<html lang="no">
                 <head>
                     <title>PR-status for Tilleggsstønader</title>
@@ -82,11 +86,16 @@ export const genererHtml = async (): Promise<String> => {
                             border-collapse: collapse;
                             margin: 6px 0 14px 0;
                             width: 100%;
-                            max-width: 1200px;
+                            max-width: 1250px;
+                        }
+
+                        td.pr-title, th.pr-title {
+                            min-width: 300px;
                         }
 
                         th, td {
                             border-bottom: 1px solid rgba(127, 127, 127, 0.3);
+                            color: var(--text-color);
                             font-size: 14px;
                             padding: 6px 8px;
                             text-align: left;
@@ -104,9 +113,9 @@ export const genererHtml = async (): Promise<String> => {
                 </head>
                 <body>
                     <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
-                    ${reposHtml.join('\n')}
-                    <div style="font-size: 22px">Fra bots</div>
-                    ${dependabotPrs.join('\n')}
+                    ${allPrsTable(reposWithPrs)}
+                    ${botPrsTable(reposWithBotPrs)}
+                    ${reposUtenPrsHtml}
                     ${pakkeversjonHtml(pakkeVersjoner)}
                     <script>
                         // Last inn lagret tema ved sideinnlasting
@@ -130,65 +139,82 @@ export const genererHtml = async (): Promise<String> => {
             </html>`;
 };
 
-const repoHtml = (repo: RepoStatus) => {
-    const title = `<span style="font-size: ${headerSize(repo)}px"><a href="${repo.pullsUrl}">${
-        repo.name
-    }</a></span>`;
-    const subtitle = `${
-        repo.antallFraBots > 0
-            ? '<span style="font-size: 12px"> (Fra bots:' + repo.antallFraBots + ')</span>'
-            : ''
-    }`;
-    return `<div>${title}${subtitle}${listPrs(repo.prs)}</div>`;
-};
-
-const repoMedDependabotPrs = (repo: RepoStatus) => {
-    if (repo.prsFraBots.length === 0) return null;
-    const title = `<span><a href="${repo.pullsUrl}">${repo.name}</a></span>`;
-    return `<div style="font-size: 14px">${title}${listPrs(repo.prsFraBots)}</div>`;
-};
-
-const headerSize = (repo: RepoStatus): number => {
-    if (repo.prs.length > 0) {
-        return 22;
-    } else if (repo.antallFraBots > 0) {
-        return 14;
-    } else {
-        return 12;
-    }
-};
-
-const listPrs = (pullRequests: PullRequest[]) => {
-    return `<table>
+const allPrsTable = (repos: RepoStatus[]): string => {
+    if (repos.length === 0) return '';
+    const allPrs = repos.flatMap((repo) => repo.prs.map((pr) => ({ pr, repo })));
+    const rows = allPrs
+        .sort((a, b) => antallDager(b.pr) - antallDager(a.pr))
+        .map(({ pr, repo }) => prRow(pr, repo));
+    return `<div style="font-size: 22px">Åpne PR-er</div>
+    <table>
         <thead>
             <tr>
-                <th>PR</th>
+                <th>Repo</th>
+                <th class="pr-title">PR</th>
                 <th>Forfatter</th>
                 <th>Alder</th>
                 <th>Kommentarer</th>
                 <th>Checks</th>
-                <th>Review</th>
+                <th>Godkjent?</th>
             </tr>
         </thead>
         <tbody>
-            ${pullRequests
-                .map((pr) => {
-                    const draftBadge = `${pr.isDraft ? `<span class="draft-badge" style="padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-right: 4px;">DRAFT</span>` : ''}`;
-                    const prTitle = `<a href="${pr.url}">${pr.title}</a>`;
-                    const comments = `<span>💬 ${pr.issueComments} / 🗨️ ${pr.reviewComments}</span>`;
-                    const reviewIcon = `${pr.approved ? '&#9989;' : ''}`;
-                    return `<tr>
-                        <td>${draftBadge}${prTitle}</td>
+            ${rows.join('\n')}
+        </tbody>
+    </table>`;
+};
+
+const botPrsTable = (repos: RepoStatus[]): string => {
+    if (repos.length === 0) return '';
+    const allPrs = repos.flatMap((repo) => repo.prsFraBots.map((pr) => ({ pr, repo })));
+    const rows = allPrs
+        .sort((a, b) => antallDager(b.pr) - antallDager(a.pr))
+        .map(({ pr, repo }) => prRow(pr, repo));
+    return `<div style="font-size: 22px; margin-top: 32px">Bot-PR-er</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Repo</th>
+                <th class="pr-title">PR</th>
+                <th>Forfatter</th>
+                <th>Alder</th>
+                <th>Kommentarer</th>
+                <th>Checks</th>
+                <th>Godkjent?</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${rows.join('\n')}
+        </tbody>
+    </table>`;
+};
+
+const prRow = (pr: PullRequest, repo: RepoStatus): string => {
+    const repoLink = `<a href="${repo.pullsUrl}">${repo.name}</a>`;
+    const draftBadge = pr.isDraft
+        ? `<span class="draft-badge" style="padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-right: 4px;">DRAFT</span>`
+        : '';
+    const prTitle = `<a href="${pr.url}">${pr.title}</a>`;
+    const comments = `<span>💬 ${pr.issueComments + pr.reviewComments}</span>`;
+    const reviewIcon = pr.approved ? '&#9989;' : '';
+    return `<tr>
+                        <td>${repoLink}</td>
+                        <td class="pr-title">${draftBadge}${prTitle}</td>
                         <td>${pr.author}</td>
-                        <td>${antallDager(pr)} dager</td>
+                        <td>${antallDager(pr)} d</td>
                         <td>${comments}</td>
                         <td>${checksIkon(pr.checksState)}</td>
                         <td>${reviewIcon}</td>
                     </tr>`;
-                })
-                .join('\n')}
-        </tbody>
-    </table>`;
+};
+
+const reposUtenPrListe = (repos: RepoStatus[]): string => {
+    if (repos.length === 0) return '';
+    const items = repos
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((r) => `<li><a href="${r.pullsUrl}">${r.name}</a></li>`)
+        .join('\n');
+    return `<div style="margin-top: 16px"><div style="font-size: 22px;">Ingen åpne PRer</div><ul style="font-size: 14px; margin: 4px 0 0 0">${items}</ul></div>`;
 };
 
 const checksIkon = (checksState: string | null) => {
@@ -222,10 +248,6 @@ const sorterPrs = (a: RepoStatus, b: RepoStatus) => {
     }
 };
 
-const sorterDependabotPrs = (a: RepoStatus, b: RepoStatus) => {
-    return a.name.localeCompare(b.name);
-};
-
 const formaterDato = (isoDate: string): string => {
     if (!isoDate) return '—';
     const d = new Date(isoDate);
@@ -246,7 +268,7 @@ const pakkeversjonHtml = (pakker: PakkeVersjon[]): string => {
             </tr>`;
         })
         .join('\n');
-    return `<div style="font-size: 22px">Pakkeversjon</div>
+    return `<div style="font-size: 22px; margin-top: 32px">Siste pakkeversjoner</div>
     <table>
         <thead>
             <tr>
