@@ -1,9 +1,11 @@
 import { hentRepoStatus } from './repoStatus';
 import { RepoStatus } from './typer';
 import { PullRequest } from '../common/octokit';
+import { hentPakkeVersjoner, PakkeVersjon } from '../pakke-versjoner/pakkeVersjoner';
 
 export const genererHtml = async (): Promise<String> => {
     const { repos } = await hentRepoStatus();
+    const pakkeVersjoner = await hentPakkeVersjoner();
     const reposHtml = repos.sort(sorterPrs).map((repo) => repoHtml(repo));
     const dependabotPrs = repos.sort(sorterDependabotPrs).map((repo) => repoMedDependabotPrs(repo));
     return `<html lang="no">
@@ -105,6 +107,7 @@ export const genererHtml = async (): Promise<String> => {
                     ${reposHtml.join('\n')}
                     <div style="font-size: 22px">Fra bots</div>
                     ${dependabotPrs.join('\n')}
+                    ${pakkeversjonHtml(pakkeVersjoner)}
                     <script>
                         // Last inn lagret tema ved sideinnlasting
                         (function() {
@@ -221,4 +224,40 @@ const sorterPrs = (a: RepoStatus, b: RepoStatus) => {
 
 const sorterDependabotPrs = (a: RepoStatus, b: RepoStatus) => {
     return a.name.localeCompare(b.name);
+};
+
+const formaterDato = (isoDate: string): string => {
+    if (!isoDate) return '—';
+    const d = new Date(isoDate);
+    return d.toLocaleDateString('nb-NO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+};
+
+const pakkeversjonHtml = (pakker: PakkeVersjon[]): string => {
+    const rader = pakker
+        .map((p) => {
+            const navnCelle = p.url
+                ? `<a href="${p.url}">${p.navn}</a>`
+                : p.navn;
+            return `<tr>
+                <td>${navnCelle}</td>
+                <td>${p.versjon}</td>
+                <td>${formaterDato(p.publisert)}</td>
+                <td><pre style="margin:0; font-size:12px; white-space: pre-wrap">${p.beskrivelse}</pre></td>
+            </tr>`;
+        })
+        .join('\n');
+    return `<div style="font-size: 22px">Pakkeversjon</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Pakke</th>
+                <th>Versjon</th>
+                <th>Publisert</th>
+                <th>Endringer</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${rader}
+        </tbody>
+    </table>`;
 };
