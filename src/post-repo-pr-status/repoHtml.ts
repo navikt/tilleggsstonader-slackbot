@@ -160,7 +160,7 @@ const allPrsTable = (repos: RepoStatus[]): string => {
                 <th>Alder</th>
                 <th>Kommentarer</th>
                 <th>Checks</th>
-                <th>Godkjent?</th>
+                <th>Godkjennere</th>
             </tr>
         </thead>
         <tbody>
@@ -185,7 +185,7 @@ const botPrsTable = (repos: RepoStatus[]): string => {
                 <th>Alder</th>
                 <th>Kommentarer</th>
                 <th>Checks</th>
-                <th>Godkjent?</th>
+                <th>Godkjennere</th>
             </tr>
         </thead>
         <tbody>
@@ -209,7 +209,16 @@ const prRow = (pr: PullRequest, repo: RepoStatus): string => {
         humanComments > 0 || pr.copilotComments > 0
             ? `<span>${humanComments > 0 ? `${humanComments} 💬 ` : ''}${copilotSuffix}</span>`
             : '';
-    const reviewIcon = pr.approved ? '&#9989;' : '';
+    const reviewersHtml =
+        pr.reviewers.length > 0
+            ? pr.reviewers
+                  .map((r) =>
+                      r.state === 'APPROVED'
+                          ? `&#9989; ${r.login}`
+                          : `&#128260; ${r.login}`
+                  )
+                  .join('<br>')
+            : '';
     return `<tr>
                         <td>${repoLink}</td>
                         <td class="pr-title">${draftBadge}${prTitle}</td>
@@ -217,7 +226,7 @@ const prRow = (pr: PullRequest, repo: RepoStatus): string => {
                         <td>${antallDager(pr)} d</td>
                         <td>${comments}</td>
                         <td>${checksIkon(pr.checksState)}</td>
-                        <td>${reviewIcon}</td>
+                        <td>${reviewersHtml}</td>
                     </tr>`;
 };
 
@@ -227,7 +236,7 @@ const reposUtenPrListe = (repos: RepoStatus[]): string => {
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((r) => `<li><a href="${r.pullsUrl}">${r.name}</a></li>`)
         .join('\n');
-    return `<div style="margin-top: 16px"><div style="font-size: 22px;">Ingen åpne PRer</div><ul style="font-size: 14px; margin: 4px 0 0 0">${items}</ul></div>`;
+    return `<div style="margin-top: 16px"><div style="font-size: 22px;">Repos uten åpen PR</div><ul style="font-size: 14px; margin: 4px 0 0 0">${items}</ul></div>`;
 };
 
 const checksIkon = (checksState: string | null) => {

@@ -48,6 +48,15 @@ interface GraphqlReponse {
                         reviews: {
                             totalCount: number;
                         };
+                        opinionatedReviews: {
+                            nodes: {
+                                author: {
+                                    login: string;
+                                } | null;
+                                state: string;
+                                submittedAt: string;
+                            }[];
+                        };
                         commits: {
                             nodes: {
                                 commit: {
@@ -64,6 +73,11 @@ interface GraphqlReponse {
     };
 }
 
+export interface Reviewer {
+    login: string;
+    state: 'APPROVED' | 'CHANGES_REQUESTED';
+}
+
 export interface PullRequest {
     title: string;
     url: string;
@@ -74,6 +88,7 @@ export interface PullRequest {
     reviewComments: number;
     copilotComments: number;
     approved: boolean;
+    reviewers: Reviewer[];
     isDraft: boolean;
     checksState: string | null;
 }
@@ -123,6 +138,15 @@ search(type: REPOSITORY, query: "owner:navikt topic:tilleggsstonader", first: 50
                         reviews(first: 0) {
                             totalCount
                         }
+                        opinionatedReviews: reviews(first: 25, states: [APPROVED, CHANGES_REQUESTED]) {
+                            nodes {
+                                author {
+                                    login
+                                }
+                                state
+                                submittedAt
+                            }
+                        }
                         commits(last: 1) {
                             nodes {
                                 commit {
@@ -156,6 +180,17 @@ export const hentRepos = async (): Promise<Repo[]> => {
             );
             const allLogins = [...issueCommentLogins, ...reviewThreadLogins];
 
+            const reviewerMap = new Map<string, Reviewer>();
+            for (const review of pr.opinionatedReviews.nodes) {
+                const login = review.author?.login;
+                if (login && !isCopilot(login)) {
+                    reviewerMap.set(login, {
+                        login,
+                        state: review.state as 'APPROVED' | 'CHANGES_REQUESTED',
+                    });
+                }
+            }
+
             return {
                 title: pr.title,
                 url: pr.url,
@@ -166,6 +201,7 @@ export const hentRepos = async (): Promise<Repo[]> => {
                 reviewComments: reviewThreadLogins.filter((l) => !isCopilot(l)).length,
                 copilotComments: allLogins.filter(isCopilot).length,
                 approved: pr.reviewDecision === 'APPROVED',
+                reviewers: Array.from(reviewerMap.values()),
                 isDraft: pr.isDraft,
                 checksState: pr.commits.nodes[0]?.commit.statusCheckRollup?.state ?? null,
             };
