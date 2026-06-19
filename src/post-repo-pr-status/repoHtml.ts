@@ -2,6 +2,7 @@ import { hentRepoStatus } from './repoStatus';
 import { RepoStatus } from './typer';
 import { PullRequest } from '../common/octokit';
 import { hentPakkeVersjoner, PakkeVersjon } from '../pakke-versjoner/pakkeVersjoner';
+import { copilotIcon } from '../assets/copilotIcon.js';
 
 export const genererHtml = async (): Promise<String> => {
     const { repos } = await hentRepoStatus();
@@ -75,6 +76,10 @@ export const genererHtml = async (): Promise<String> => {
 
                         .theme-toggle:hover {
                             background-color: var(--toggle-hover-bg);
+                        }
+
+                        body.dark-mode .copilot-icon {
+                            filter: invert(1);
                         }
 
                         .draft-badge {
@@ -195,7 +200,15 @@ const prRow = (pr: PullRequest, repo: RepoStatus): string => {
         ? `<span class="draft-badge" style="padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-right: 4px;">DRAFT</span>`
         : '';
     const prTitle = `<a href="${pr.url}">${pr.title}</a>`;
-    const comments = `<span>💬 ${pr.issueComments + pr.reviewComments}</span>`;
+    const humanComments = pr.issueComments + pr.reviewComments;
+    const copilotSuffix =
+        pr.copilotComments > 0
+            ? ` <span style="color: #8b949e;">(${pr.copilotComments} ${copilotIcon})</span>`
+            : '';
+    const comments =
+        humanComments > 0 || pr.copilotComments > 0
+            ? `<span>${humanComments > 0 ? `${humanComments} 💬 ` : ''}${copilotSuffix}</span>`
+            : '';
     const reviewIcon = pr.approved ? '&#9989;' : '';
     return `<tr>
                         <td>${repoLink}</td>

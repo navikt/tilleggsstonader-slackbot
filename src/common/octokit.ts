@@ -28,10 +28,22 @@ interface GraphqlReponse {
                         reviewDecision: string;
                         isDraft: boolean;
                         comments: {
-                            totalCount: number;
+                            nodes: {
+                                author: {
+                                    login: string;
+                                } | null;
+                            }[];
                         };
                         reviewThreads: {
-                            totalCount: number;
+                            nodes: {
+                                comments: {
+                                    nodes: {
+                                        author: {
+                                            login: string;
+                                        } | null;
+                                    }[];
+                                };
+                            }[];
                         };
                         reviews: {
                             totalCount: number;
@@ -60,6 +72,7 @@ export interface PullRequest {
     totalReviews: number;
     issueComments: number;
     reviewComments: number;
+    copilotComments: number;
     approved: boolean;
     isDraft: boolean;
     checksState: string | null;
@@ -89,11 +102,23 @@ search(type: REPOSITORY, query: "owner:navikt topic:tilleggsstonader", first: 50
                         reviewDecision
                         createdAt
                         isDraft
-                        comments {
-                            totalCount
+                        comments(first: 25) {
+                            nodes {
+                                author {
+                                    login
+                                }
+                            }
                         }
-                        reviewThreads(first: 0) {
-                            totalCount
+                        reviewThreads(first: 25) {
+                            nodes {
+                                comments(first: 1) {
+                                    nodes {
+                                        author {
+                                            login
+                                        }
+                                    }
+                                }
+                            }
                         }
                         reviews(first: 0) {
                             totalCount
@@ -121,17 +146,29 @@ export const hentRepos = async (): Promise<Repo[]> => {
     return search.repos.map((repo) => ({
         name: repo.repo.name,
         url: repo.repo.url,
-        pullRequests: repo.repo.pullRequests.nodes.map((pr) => ({
-            title: pr.title,
-            url: pr.url,
-            author: pr.author.login,
-            createdAt: pr.createdAt,
-            totalReviews: pr.reviews.totalCount,
-            issueComments: pr.comments.totalCount,
-            reviewComments: pr.reviewThreads.totalCount,
-            approved: pr.reviewDecision === 'APPROVED',
-            isDraft: pr.isDraft,
-            checksState: pr.commits.nodes[0]?.commit.statusCheckRollup?.state ?? null,
-        })),
+        pullRequests: repo.repo.pullRequests.nodes.map((pr) => {
+            const isCopilot = (login: string | undefined) =>
+                (login ?? '').toLowerCase().includes('copilot');
+
+            const issueCommentLogins = pr.comments.nodes.map((c) => c.author?.login);
+            const reviewThreadLogins = pr.reviewThreads.nodes.map(
+                (t) => t.comments.nodes[0]?.author?.login
+            );
+            const allLogins = [...issueCommentLogins, ...reviewThreadLogins];
+
+            return {
+                title: pr.title,
+                url: pr.url,
+                author: pr.author.login,
+                createdAt: pr.createdAt,
+                totalReviews: pr.reviews.totalCount,
+                issueComments: issueCommentLogins.filter((l) => !isCopilot(l)).length,
+                reviewComments: reviewThreadLogins.filter((l) => !isCopilot(l)).length,
+                copilotComments: allLogins.filter(isCopilot).length,
+                approved: pr.reviewDecision === 'APPROVED',
+                isDraft: pr.isDraft,
+                checksState: pr.commits.nodes[0]?.commit.statusCheckRollup?.state ?? null,
+            };
+        }),
     }));
 };
