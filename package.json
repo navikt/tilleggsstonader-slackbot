@@ -10,6 +10,9 @@
   },
   "author": "NAV",
   "license": "ISC",
+  "resolutions": {
+    "proxy-addr": "^2.0.8"
+  },
     "dependencies": {
         "@octokit/graphql": "^9.0.1",
         "@slack/web-api": "^8.1.1",
