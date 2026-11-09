@@ -56,18 +56,18 @@
   dependencies:
     "@types/node" ">=20"
 
-"@slack/types@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@slack/types/-/types-3.2.0.tgz#fc0769fce41fb538abc40b3a787b6e7effef7918"
-  integrity sha512-IN4gdtlzQt8UJoj+1v+qAHeR4TxHO0KMlIs841SFfDQAcFFnsrWaGsEAE4goxVt8O/JOAFaGGdrFTzhNBop/Fg==
+"@slack/types@^3.3.0":
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/@slack/types/-/types-3.3.0.tgz#b457eb94d3806b9ae0a1a73f6176ec3524df0fae"
+  integrity sha512-11r2kM9Zy/UlaV6OwPibZueVlyNJ5xtHEHK/iYDnPLyhQcxRtsifNAwNhJ1Lm0nszW4jrWCHThXCHCNJC/hvqg==
 
-"@slack/web-api@^8.2.0":
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/@slack/web-api/-/web-api-8.2.0.tgz#a84f9a34aae73a57c51f6fa7ac543112c60f5c01"
-  integrity sha512-bIW8/8BLD/HLuHLIA2LfA7AhSokzui4swCbMJuwoRJxn/kzHVla6YEKLvN1nCFHK/DfX7g+4Wj3ess/ZSh/tWQ==
+"@slack/web-api@^8.3.0":
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/@slack/web-api/-/web-api-8.3.0.tgz#addcdafa6d4fe95aeffd923b65976fbaea419e9c"
+  integrity sha512-rGHDZggzG658Uc4yebenp3rVfVVToL0w8aOis40EfrstZCxg8FWS+ECGDIkw498Q9jxF/LVKgGbPfUeYntTrUQ==
   dependencies:
     "@slack/logger" "^5.0.0"
-    "@slack/types" "^3.2.0"
+    "@slack/types" "^3.3.0"
     "@types/node" ">=20"
     "@types/retry" "0.12.5"
     eventemitter3 "^5.0.1"
@@ -186,10 +186,10 @@ asynckit@^0.4.0:
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
   integrity sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==
 
-axios@^1.20.0:
-  version "1.20.0"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.20.0.tgz#515513445aa60e71d04b6521ca6210829ccb4786"
-  integrity sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==
+axios@^1.21.0:
+  version "1.21.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.21.0.tgz#30c363a2652d9649e8b4d2645b34c64ca541ff67"
+  integrity sha512-YCzXMB53Q9PZBsh7yN7wtapit4WepwcHS2fP8QhGsBxSz5YtgYobV7GGlWlAJi+RxfU77GQTQi2DSLUma42EYA==
   dependencies:
     follow-redirects "^1.16.0"
     form-data "^4.0.6"
