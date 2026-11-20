@@ -199,7 +199,7 @@ const prRow = (pr: PullRequest, repo: RepoStatus): string => {
     const draftBadge = pr.isDraft
         ? `<span class="draft-badge" style="padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-right: 4px;">DRAFT</span>`
         : '';
-    const prTitle = `<a href="${pr.url}">${pr.title}</a>`;
+    const prTitle = `<a href="${pr.url}" target="_blank">${pr.title}</a>`;
     const humanComments = pr.issueComments + pr.reviewComments;
     const copilotSuffix =
         pr.copilotComments > 0
@@ -234,7 +234,7 @@ const reposUtenPrListe = (repos: RepoStatus[]): string => {
     if (repos.length === 0) return '';
     const items = repos
         .sort((a, b) => a.name.localeCompare(b.name))
-        .map((r) => `<li><a href="${r.pullsUrl}">${r.name}</a></li>`)
+        .map((r) => `<li><a href="${r.pullsUrl}" target="_blank">${r.name}</a></li>`)
         .join('\n');
     return `<div style="margin-top: 16px"><div style="font-size: 22px;">Repos uten åpen PR</div><ul style="font-size: 14px; margin: 4px 0 0 0">${items}</ul></div>`;
 };
@@ -280,7 +280,7 @@ const pakkeversjonHtml = (pakker: PakkeVersjon[]): string => {
     const rader = pakker
         .map((p) => {
             const navnCelle = p.url
-                ? `<a href="${p.url}">${p.navn}</a>`
+                ? `<a href="${p.url}" target="_blank">${p.navn}</a>`
                 : p.navn;
             return `<tr>
                 <td>${navnCelle}</td>
