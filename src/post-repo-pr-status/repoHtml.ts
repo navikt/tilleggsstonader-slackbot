@@ -195,7 +195,7 @@ const botPrsTable = (repos: RepoStatus[]): string => {
 };
 
 const prRow = (pr: PullRequest, repo: RepoStatus): string => {
-    const repoLink = `<a href="${repo.pullsUrl}">${repo.name}</a>`;
+    const repoLink = `<a href="${repo.pullsUrl}" target="_blank">${repo.name}</a>`;
     const draftBadge = pr.isDraft
         ? `<span class="draft-badge" style="padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-right: 4px;">DRAFT</span>`
         : '';
