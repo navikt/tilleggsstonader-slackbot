@@ -61,10 +61,10 @@
   resolved "https://registry.yarnpkg.com/@slack/types/-/types-3.3.0.tgz#b457eb94d3806b9ae0a1a73f6176ec3524df0fae"
   integrity sha512-11r2kM9Zy/UlaV6OwPibZueVlyNJ5xtHEHK/iYDnPLyhQcxRtsifNAwNhJ1Lm0nszW4jrWCHThXCHCNJC/hvqg==
 
-"@slack/web-api@^8.3.0":
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/@slack/web-api/-/web-api-8.3.0.tgz#addcdafa6d4fe95aeffd923b65976fbaea419e9c"
-  integrity sha512-rGHDZggzG658Uc4yebenp3rVfVVToL0w8aOis40EfrstZCxg8FWS+ECGDIkw498Q9jxF/LVKgGbPfUeYntTrUQ==
+"@slack/web-api@^8.4.0":
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/@slack/web-api/-/web-api-8.4.0.tgz#b42fc32b7a742add6aa67a952894ccbee700c0dc"
+  integrity sha512-SZSa8Xqz0jkvGfw9lLKQt17u44Xi5+O2QRMFo6f2vTEP0fPS+ThxOR0++AwJAPOkf3PKxA7lLmrL9Y4Y2J693w==
   dependencies:
     "@slack/logger" "^5.0.0"
     "@slack/types" "^3.3.0"
@@ -636,10 +636,10 @@ path-to-regexp@^8.0.0:
   resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-8.4.0.tgz#8e98fcd94826aff01a90c544ef74ffbaca3a78ed"
   integrity sha512-PuseHIvAnz3bjrM2rGJtSgo1zjgxapTLZ7x2pjhzWwlp4SJQgK3f3iZIQwkpEnBaKz6seKBADpM4B4ySkuYypg==
 
-prettier@^3.9.1:
-  version "3.9.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.9.1.tgz#5868bcf16456bfe145ddbfa107c623b6f39e332c"
-  integrity sha512-ppiDo2CSwexck1eyZUwJHg/N3nf1+6IRCv7W/VJ5vaLnVCmB7+3CdRfMwoCHBBX6xTrREDTksZ4OZl5SSf4zXA==
+prettier@^3.10.1:
+  version "3.10.1"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.10.1.tgz#00b1c1872f9650ec22093d5bdafdca0fe6760f77"
+  integrity sha512-70vp3ZUYoPlFbF9uiTdXHUUCGEIp7d4+6p+8DYbkm2jP7x/3i/paXVF6dopSI3zd/CEitrZN1rc4i85xWmmXlg==
 
 proxy-addr@^2.0.8:
   version "2.0.8"

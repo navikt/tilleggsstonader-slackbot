@@ -15,7 +15,7 @@
   },
     "dependencies": {
         "@octokit/graphql": "^9.0.1",
-        "@slack/web-api": "^8.3.0",
+        "@slack/web-api": "^8.4.0",
         "axios": "^1.21.0",
         "body-parser": "^2.4.0",
         "dotenv": "^18.0.1",
@@ -26,7 +26,7 @@
         "@types/express": "^5.0.3",
         "@types/node-cron": "^3.0.11",
         "@vercel/ncc": "^0.45.0",
-        "prettier": "^3.9.1",
+        "prettier": "^3.10.1",
         "typescript": "^6.0.2"
     }
 }
